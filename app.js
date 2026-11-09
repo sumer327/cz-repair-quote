@@ -110,7 +110,7 @@ function quoteInfo(){
   if(st.cond && st.cond!=="unsure"){ const c=sc.conds.find(x=>x.k===st.cond); const i=cheapest(c.cols);
     return {lines:i===null?[]:[{label:sc.names[i],price:p[i],i}], cost:i===null?null:`the cost is ${p[i]}`, q:i}; }
   const lines=[]; for(const c of sc.conds){ const i=cheapest(c.cols); if(i!==null) lines.push({label:c.n,price:p[i],i,cond:c}); }
-  if(lines.length===1) return {lines, cost:`the cost is ${lines[0].price}`, q:lines[0].i};
+  if(lines.length===1 || (lines.length>1 && lines.every(l=>l.price===lines[0].price))) return {lines:[{...lines[0],label:sc.names[lines[0].i],cond:undefined}], cost:`the cost is ${lines[0].price}`, q:lines[0].i};
   return {lines, multi:lines.length>1, cost:lines.length?"the cost is "+lines.map(l=>`${l.price} ${l.cond.say}`).join(", or "):null, q:lines.length?lines[0].i:null};
 }
 function buildScript(qi, pol, partState){
