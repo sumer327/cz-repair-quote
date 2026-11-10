@@ -157,9 +157,11 @@ function render(){
   // facts + script, right under the price
   const stockFact = partState==="stock"?`<span class="fact ok">Part in stock</span>`:partState==="order"?`<span class="fact wn">Needs ordering · next business day</span>`:partState==="none"?"":`<span class="fact wn">Check stock in RepairShopr</span>`;
   const timeFact = pol.time?`<span class="fact ok">Takes about ${esc(pol.time)}</span>`:`<span class="fact wn">Ask a tech how long</span>`;
-  h+=`<div class="sayrow"><div class="lbl">Say it like this</div><div class="sayline" id="script">${esc(script)}</div>
+  // Order (Sam, Nov 10): yellow price -> All screen qualities -> Say it like this
+  const sayRow=`<div class="sayrow"><div class="lbl">Say it like this</div><div class="sayline" id="script">${esc(script)}</div>
      <div class="facts">${stockFact}${timeFact}<span class="fact">${esc(RULES.warranty)}</span></div>
-     <button class="btn" id="copy">Copy script</button></div></div>`;
+     <button class="btn" id="copy">Copy script</button></div>`;
+  h+=`</div>`; // close the price card
 
   if(st.repair==="screen" && sc && sc.conds.some(c=>c.cols.length>1)){
     const quoted=new Set(qi.lines.map(l=>l.i));
@@ -173,6 +175,7 @@ function render(){
     }).join("");
     h+=`<div class="card"><div class="rowhd"><div class="lbl">All screen qualities</div>${sc.upsell?`<div class="note">Quote the yellow one on the phone. Walk them through the others at the counter.</div>`:""}</div>${blocks}</div>`;
   }
+  h+=`<div class="card">${sayRow}</div>`;
 
   const hrs=hoursLine();
   const items=[
