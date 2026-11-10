@@ -10,6 +10,8 @@ const SCREEN = {
     {k:"works",n:"Display works",hint:"Picture and touch are fine, just cracked glass",say:"if the display still works and it's just the glass",cols:[0,1,2]},
     {k:"dead",n:"Display damaged",hint:"Black, lines, bleeding, or touch not working",say:"if the display is black, has lines, or touch isn't working",cols:[3,4,5]}],
     names:["Good · Glass Only","Better · Glass Only","Best · Glass Only","Good · Aftermarket LCD","Better · Premium OLED","Best · Genuine Apple"],
+    // tile label = tier word + bold badge + descriptor (Sam, Nov 10: Better = OLED, Best = OEM, shown in bold on every Better/Best tile)
+    kinds:["","OLED","OEM","","OLED","OEM"], desc:["Glass Only","Glass Only","Glass Only","Aftermarket LCD","Full screen","Genuine Apple"],
     why:["Aftermarket incell screen. Priced lower because we keep the old screen.","Premium OLED screen. Deeper blacks, sharper picture, easier on the battery than LCD.","Genuine Apple screen, the same part the phone shipped with.",
          "Aftermarket incell LCD. The budget fix that gets the phone working.","Premium OLED screen. Deeper blacks, sharper picture, easier on the battery than LCD.","Genuine Apple screen, the same part the phone shipped with."]},
   samsung:{upsell:false, conds:[
@@ -98,6 +100,10 @@ function repairs(){
   return list;
 }
 function hasPrice(r){ const p=st.model.p; if(r.k==="screen") return SCREEN[st.cat].conds.some(c=>c.cols.some(i=>p[i])); return !!p[r.i]; }
+// "Better OLED · Glass Only": tier word, then the bold OLED/OEM badge, then what the repair is
+function tileName(sc,i){ const n=sc.names[i]; if(!sc.kinds) return esc(n);
+  const tier=n.split(" · ")[0], k=sc.kinds[i], d=(sc.desc||[])[i] ?? n.split(" · ").slice(1).join(" · ");
+  return `${esc(tier)}${k?` <b class="t-k">${esc(k)}</b>`:""}${d?` · ${esc(d)}`:""}`; }
 function cheapest(cols){ const p=st.model.p; let best=null;
   for(const i of cols){ if(!p[i]) continue; const n=num(p[i]);
     if(best===null || (n!==null && (num(p[best])===null || n<num(p[best])))) best=i; }
@@ -162,7 +168,7 @@ function render(){
       const tiles=c.cols.map(i=>{ const v=m.p[i]; const q=quoted.has(i);
         let tag = !v?`<span class="tag off">Not offered</span>` : q?`<span class="tag say">Quote this over the phone</span>` : sc.upsell?`<span class="tag up">Upsell in store only</span>`:"";
         const pi=policy(i); const stockNote = v && st.cat==="iphone" && pi.stock==="check" ? `<div class="t-x"><b>Check stock</b> before promising this one.</div>`:"";
-        return `<div class="tier ${q?"q":""} ${!v||dim?"na":""}">${tag}<div class="t-n">${esc(sc.names[i])}</div><div class="t-p">${v?esc(v):"—"}</div>${sc.why[i]&&v?`<div class="t-x">${esc(sc.why[i])}</div>`:""}${stockNote}</div>`; }).join("");
+        return `<div class="tier ${q?"q":""} ${!v||dim?"na":""}">${tag}<div class="t-n">${tileName(sc,i)}</div><div class="t-p">${v?esc(v):"—"}</div>${sc.why[i]&&v?`<div class="t-x">${esc(sc.why[i])}</div>`:""}${stockNote}</div>`; }).join("");
       return `${sc.conds.length>1?`<div class="rowhd"><div class="lbl">${esc(c.n)}${dim?" · doesn't apply":""}</div><div class="note">${esc(c.hint)}</div></div>`:""}<div class="tiers" style="${c.cols.length<3?`grid-template-columns:repeat(${Math.max(c.cols.length,1)},minmax(0,1fr))`:""}">${tiles}</div>`;
     }).join("");
     h+=`<div class="card"><div class="rowhd"><div class="lbl">All screen qualities</div>${sc.upsell?`<div class="note">Quote the yellow one on the phone. Walk them through the others at the counter.</div>`:""}</div>${blocks}</div>`;
