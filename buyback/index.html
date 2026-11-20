@@ -41,11 +41,11 @@ h1{font:800 clamp(26px,6vw,34px)/1.05 var(--display);margin:6px 0 0;text-wrap:ba
 .step{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px}
 .step[data-state="locked"]{opacity:.5}
 .step-h{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.step-t{font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px}
+.step-t{font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px;flex:none;white-space:nowrap}
 .num{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px/1 var(--body);background:var(--soft);color:var(--muted);flex:none}
 .step[data-state="open"] .num{background:var(--accent);color:var(--accent-ink)}
 .step[data-state="done"] .num{background:var(--cash);color:#fff}
-.picked{color:var(--muted);font-weight:500;font-size:14px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.picked{color:var(--muted);font-weight:500;font-size:14px;line-height:1.3;min-width:0;flex:1;text-align:right;overflow-wrap:anywhere}
 .change{background:none;border:0;color:var(--accent);font:600 13px var(--body);cursor:pointer;padding:4px 2px}
 .body{margin-top:14px}
 .step[data-state="done"] .body,.step[data-state="locked"] .body{display:none}
